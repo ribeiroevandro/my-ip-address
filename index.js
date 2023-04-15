@@ -1,29 +1,32 @@
-import express from 'express';
+import awsServerlessExpress from "aws-serverless-express";
+import { app } from "./source/app.js"
 
-const PORT = defaultPort(process.env.PORT || 3000);
-const app = express();
-
-function defaultPort(value) {
-  const port = parseInt(value, 10);
-
-  if(isNaN(port)) {
-    return value
-  } else if (port >= 0 ) {
-    return port;
+class DefaultPort {
+  constructor(value) {
+    this.value = value;
   }
 
-  return false;
+  verifyPort() {
+    const port = parseInt(this.value, 10);
+
+    if(isNaN(port)) {
+      return this.value
+    } else if (port >= 0) {
+      return port;
+    }
+
+    return false;
+  }
 }
 
-app.enable('trust proxy');
+const PORT = new DefaultPort(process.env.PORT || 3000);
 
-app.get('/',(request, response) => {
-  const ipAddress = request.ip;
-  console.log(ipAddress);
-  response.json({message: `${ipAddress}`})
-});
+// app.listen(PORT.verifyPort(), (err) => {
+//   if(err) console.log(err);
+//   console.log(`App listening on port ${PORT.verifyPort()}`);
+// });
 
-app.listen(PORT, (err) => {
-  if(err) console.log(err);
-  console.log(`App listening on port ${PORT}`)
-});
+const server = awsServerlessExpress.createServer(app);
+export const handler = (event, context) => {
+  awsServerlessExpress.proxy(server, event, context);
+};
