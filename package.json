@@ -14,7 +14,8 @@
   "author": "Gustavo Nogueira",
   "license": "GPLv3",
   "dependencies": {
-    "body-parser": "^1.20.2",
+    "aws-lambda": "^1.0.7",
+    "aws-serverless-express": "^3.4.0",
     "express": "^4.18.2",
     "serverless": "^3.28.1"
   },
